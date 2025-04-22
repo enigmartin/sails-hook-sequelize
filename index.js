@@ -55,6 +55,17 @@ module.exports = sails => {
                     this.reload(next);
                 });
             }
+
+            global['SequelizeTransaction'] = async function(callback) {
+                const connection = SequelizeConnections[sails.config.models.connection || 'default'];
+                try {
+                  return await connection.transaction(callback);
+                } catch (err) {
+                  sails.log.error('Transaction error:', err);
+                  throw err;
+                }
+              };
+              
         },
 
         reload(next) {
